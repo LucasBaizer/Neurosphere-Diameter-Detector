@@ -1,4 +1,4 @@
-package org.jointheleague.org.jointheleague.ir;
+package org.jointheleague.ir;
 
 import static org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.opencv_imgcodecs.*;
