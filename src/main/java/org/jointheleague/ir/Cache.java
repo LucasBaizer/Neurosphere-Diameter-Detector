@@ -19,12 +19,15 @@ public class Cache {
 
 		String[] split = cacheData.split("\n");
 		for (int i = 0; i < split.length - 1; i += 2) {
-			String name = split[0];
-			String data = split[1];
+			String name = split[i];
+			String data = split[i + 1];
 			cachedData.put(name.substring(1, name.length() - 1), data);
 		}
 
 		ensure("ImageDirectory", System.getProperty("user.home"));
+		ensure("BlurFactor", "1.0");
+		ensure("MinimumSize", "100");
+		ensure("MinimumDistance", "200");
 	}
 
 	private static void ensure(String key, String value) {

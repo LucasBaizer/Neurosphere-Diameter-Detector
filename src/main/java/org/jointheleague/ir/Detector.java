@@ -6,8 +6,6 @@ import static org.bytedeco.javacpp.opencv_imgproc.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.bytedeco.javacpp.opencv_core.CvMemStorage;
 import org.bytedeco.javacpp.opencv_core.CvPoint;
@@ -57,14 +55,14 @@ public class Detector {
 		onBlur.notifyObservers(blurred);
 	}
 
-	public List<Detection> detect() {
-		int minSizePixels = Measurement.MICROMETERS.to(Measurement.PIXELS, (int) minSize);
+	public DetectionList detect() {
+		int minSizePixels = (int) Measurement.MICROMETERS.convert(Measurement.PIXELS, minSize);
 
 		CvMemStorage mem = CvMemStorage.create();
 		CvSeq circles = cvHoughCircles(blurred, mem, CV_HOUGH_GRADIENT, 1,
-				Measurement.MICROMETERS.to(Measurement.PIXELS, (int) minDistance), 100, 25, minSizePixels / 2,
+				Measurement.MICROMETERS.convert(Measurement.PIXELS, minDistance), 100, 25, minSizePixels / 2,
 				minSizePixels);
-		List<Detection> detections = new ArrayList<Detection>();
+		DetectionList detections = new DetectionList();
 
 		for (int i = 0; i < circles.total(); i++) {
 			CvPoint3D32f circle = new CvPoint3D32f(cvGetSeqElem(circles, i));

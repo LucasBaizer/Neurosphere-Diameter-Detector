@@ -8,7 +8,6 @@ import java.awt.Insets;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -23,7 +22,16 @@ import org.bytedeco.javacpp.opencv_core.IplImage;
 public class UIPanel extends JPanel {
 	private static final long serialVersionUID = 5677751569635467335L;
 
+	private static UIPanel instance;
+	private ImageComponent ic;
+
+	public static UIPanel getInstance() {
+		return instance;
+	}
+
 	public UIPanel() {
+		instance = this;
+
 		setLayout(new GridBagLayout());
 
 		GridBagConstraints c = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.FIRST_LINE_START,
@@ -47,7 +55,7 @@ public class UIPanel extends JPanel {
 		add(info, c);
 
 		c.gridy = 1;
-		ImageComponent ic = new ImageComponent(null).setInput(true);
+		ic = new ImageComponent(null).setInput(true);
 		ic.onImageSelected().addObserver((source, event) -> {
 			imageName.setText(event.getSourceFile().getName());
 			imageSize.setText(event.getImage().getWidth() + "x" + event.getImage().getHeight() + " px");
@@ -71,16 +79,6 @@ public class UIPanel extends JPanel {
 		c.gridx = 2;
 		add(output, c);
 
-		ic.onScaleChanged().addObserver((source, scale) -> {
-			blurred.setImage((IplImage) null);
-			blurred.refresh();
-			output.setImage(null);
-			output.removeAll();
-
-			blurred.setPreferredSize(ic.getPreferredSize());
-			output.setPreferredSize(ic.getPreferredSize());
-		});
-
 		JPanel outputInfo = new JPanel();
 		outputInfo.setLayout(new BoxLayout(outputInfo, BoxLayout.X_AXIS));
 
@@ -101,13 +99,13 @@ public class UIPanel extends JPanel {
 		params.setLayout(new BoxLayout(params, BoxLayout.X_AXIS));
 
 		JTextField blurFactor = new JTextField(5);
-		blurFactor.setText("1.0");
+		blurFactor.setText(Cache.get("BlurFactor"));
 
 		JTextField minimumSize = new JTextField(5);
-		minimumSize.setText("100");
+		minimumSize.setText(Cache.get("MinimumSize"));
 
 		JTextField minimumDist = new JTextField(5);
-		minimumDist.setText("200");
+		minimumDist.setText(Cache.get("MinimumDistance"));
 
 		params.add(new JLabel("Blur Factor: "));
 		params.add(blurFactor);
@@ -127,6 +125,19 @@ public class UIPanel extends JPanel {
 		c.gridy = 3;
 		add(detect, c);
 
+		ic.onScaleChanged().addObserver((source, scale) -> {
+			outputTime.setText("");
+			outputCircles.setText("");
+			outputAverage.setText("");
+
+			blurred.setImage((IplImage) null);
+			blurred.refresh();
+			output.setImage(null);
+			output.removeAll();
+
+			blurred.setPreferredSize(ic.getPreferredSize());
+			output.setPreferredSize(ic.getPreferredSize());
+		});
 		detect.addActionListener(e -> {
 			if (ic.getImage() == null) {
 				JOptionPane.showMessageDialog(null, "Please select an image to measure.", Program.APPLICATION_NAME,
@@ -161,6 +172,10 @@ public class UIPanel extends JPanel {
 				return;
 			}
 
+			Cache.save("BlurFactor", Double.toString(blur));
+			Cache.save("MinimumSize", Double.toString(min));
+			Cache.save("MinimumDistance", Double.toString(dist));
+
 			Detector detector = new Detector(ic.getSelectedFile(), blur, min, dist);
 			detector.onBlur().addObserver((source, image) -> {
 				blurred.setBackgroundText(null);
@@ -168,6 +183,10 @@ public class UIPanel extends JPanel {
 				blurred.refresh();
 			});
 			Thread detectorThread = new Thread(() -> {
+				outputTime.setText("");
+				outputCircles.setText("");
+				outputAverage.setText("");
+
 				blurred.setImage((IplImage) null);
 				output.setImage(null);
 				output.removeAll();
@@ -199,28 +218,38 @@ public class UIPanel extends JPanel {
 				output.revalidate();
 				output.repaint();
 
-				List<Detection> detected = detector.detect();
+				DetectionList detected = detector.detect();
 
 				long passed = System.currentTimeMillis() - time;
 
 				output.setBackgroundText(null);
 				output.setImage(ic.getRenderImage());
 
-				int totalDiameter = 0;
 				for (Detection detection : detected) {
-					output.add(new DetectionComponent(detection, ic.getScale()));
-					totalDiameter += detection.getDiameter();
+					output.add(new DetectionComponent(detected, detection, ic.getScale()));
 				}
-				int average = (int) (totalDiameter / (double) detected.size());
 
 				output.revalidate();
 				output.repaint();
 
 				outputTime.setText("Took " + new BigDecimal(passed / 1000d).round(new MathContext(3)) + "s");
 				outputCircles.setText(detected.size() + " neurospheres");
-				outputAverage.setText("Average " + Measurement.PIXELS.to(Measurement.MICROMETERS, average) + "μm");
+				outputAverage.setText("Average "
+						+ (int) Measurement.PIXELS.convert(Measurement.MICROMETERS, detected.getAverageDiameter())
+						+ "μm");
+
+				detected.onListChanged().addObserver((source, detection) -> {
+					outputCircles.setText(detected.size() + " neurospheres");
+					outputAverage.setText("Average "
+							+ (int) Measurement.PIXELS.convert(Measurement.MICROMETERS, detected.getAverageDiameter())
+							+ "μm");
+				});
 			});
 			detectorThread.start();
 		});
+	}
+
+	public ImageComponent getInputComponent() {
+		return ic;
 	}
 }

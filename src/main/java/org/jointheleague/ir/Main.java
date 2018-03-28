@@ -5,7 +5,7 @@ import javax.swing.UIManager;
 
 public class Main {
 	public static JFrame FRAME;
-	
+
 	public static void main(String[] args) {
 		Program.initialize();
 
@@ -17,11 +17,12 @@ public class Main {
 		}
 
 		JFrame frame = new JFrame(Program.APPLICATION_NAME);
+		frame.setJMenuBar(new Toolbar());
 		frame.add(new UIPanel());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		frame.pack();
-		
+
 		FRAME = frame;
 	}
 }

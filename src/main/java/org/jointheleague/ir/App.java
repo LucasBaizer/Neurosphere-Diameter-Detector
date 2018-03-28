@@ -31,7 +31,7 @@ public class App {
 
 		CvFont font = cvFont(1, 1);
 		CvSize size = new CvSize();
-		String text = "Average diameter: " + Measurement.PIXELS.to(Measurement.MICROMETERS, average) + "um";
+		String text = "Average diameter: " + Measurement.PIXELS.convert(Measurement.MICROMETERS, average) + "um";
 		cvGetTextSize(text, font, size, new int[1]);
 
 		cvPutText(detector.getOutput(), text,

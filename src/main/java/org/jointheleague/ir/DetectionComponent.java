@@ -2,17 +2,23 @@ package org.jointheleague.ir;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Ellipse2D;
 import java.util.Objects;
 
+import javax.swing.AbstractAction;
 import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 public class DetectionComponent extends JComponent {
@@ -21,15 +27,17 @@ public class DetectionComponent extends JComponent {
 	private Point selectedPoint;
 	private int actualDiameter;
 	private boolean selected;
+	private boolean destroyed;
 
-	public DetectionComponent(Detection detection, double scale) {
+	public DetectionComponent(DetectionList list, Detection detection, double scale) {
 		Objects.requireNonNull(detection);
 
 		int originalX = (int) ((detection.getCenter().x - detection.getRadius()) * scale);
 		int originalY = (int) ((detection.getCenter().y - detection.getRadius()) * scale);
-		setBounds(originalX, originalY, (int) (detection.getDiameter() * scale),
-				(int) (detection.getDiameter() * scale));
+		int originalDiameter = (int) (detection.getDiameter() * scale);
+		int deltaScale = (int) (detection.getDiameter() / 50d);
 
+		setBounds(originalX, originalY, originalDiameter, originalDiameter);
 		setFont(new Font("Arial", Font.BOLD, (int) (detection.getRadius() * scale / 2d)));
 
 		actualDiameter = detection.getDiameter();
@@ -40,27 +48,91 @@ public class DetectionComponent extends JComponent {
 				selected = true;
 				selectedPoint = e.getPoint();
 				repaint();
+
+				requestFocus();
 			}
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
+				if (destroyed) {
+					return;
+				}
+
 				Point pt = e.getPoint();
 				SwingUtilities.convertPointToScreen(pt, DetectionComponent.this);
 				SwingUtilities.convertPointFromScreen(pt, getParent());
 
 				setLocation(pt.x - selectedPoint.x, pt.y - selectedPoint.y);
-				paintImmediately(getBounds());
+				detection.setCenter(getLocation()); // TODO is this necessary?
+
+				// list.onListChanged().notifyObservers(new
+				// ListEvent<Detection>(ListEvent.MANUAL, detection));
+
+				repaint();
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				if (destroyed) {
+					return;
+				}
+
 				selected = false;
 				selectedPoint = null;
 				repaint();
 			}
+
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				if (destroyed) {
+					return;
+				}
+
+				if (selected) {
+					Dimension size = getSize();
+					size.width += (deltaScale * e.getWheelRotation());
+					size.height += (deltaScale * e.getWheelRotation());
+
+					detection.setDiameter((int) (size.width / scale));
+					actualDiameter = detection.getDiameter();
+
+					setLocation(getX() - e.getWheelRotation(), getY() - e.getWheelRotation());
+					selectedPoint.x += e.getWheelRotation();
+					selectedPoint.y += e.getWheelRotation();
+
+					setFont(new Font("Arial", Font.BOLD, (int) (detection.getRadius() * scale / 2d)));
+					setSize(size);
+
+					list.onListChanged().markChanged();
+					list.onListChanged().notifyObservers(new ListEvent<Detection>(ListEvent.MANUAL, detection));
+
+					repaint();
+				}
+			}
 		};
 		addMouseListener(listener);
 		addMouseMotionListener(listener);
+		addMouseWheelListener(listener);
+
+		getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete");
+		getActionMap().put("delete", new AbstractAction() {
+			private static final long serialVersionUID = 8428486399192334220L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				destroyed = true;
+				selected = false;
+				selectedPoint = null;
+
+				removeMouseListener(listener);
+				removeMouseMotionListener(listener);
+				removeMouseWheelListener(listener);
+
+				list.remove(detection);
+
+				getParent().remove(DetectionComponent.this);
+			}
+		});
 	}
 
 	@Override
@@ -78,7 +150,8 @@ public class DetectionComponent extends JComponent {
 		g2d.draw(new Ellipse2D.Double(0, 0, getWidth(), getHeight()));
 
 		FontMetrics metrics = getFontMetrics(getFont());
-		String text = Integer.toString(Measurement.PIXELS.to(Measurement.MICROMETERS, actualDiameter)) + "μm";
+		String text = Integer.toString((int) Measurement.PIXELS.convert(Measurement.MICROMETERS, actualDiameter))
+				+ "μm";
 		g.drawString(text, (getWidth() - metrics.stringWidth(text)) / 2,
 				((getHeight() - metrics.getHeight()) / 2) + metrics.getAscent());
 	}

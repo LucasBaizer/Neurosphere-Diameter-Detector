@@ -32,6 +32,9 @@ import org.bytedeco.javacpp.opencv_imgcodecs;
 public class ImageComponent extends JComponent {
 	private static final long serialVersionUID = -2546741406493029667L;
 
+	public static final int DEFAULT_WIDTH = 600;
+	public static final int DEFAULT_HEIGHT = 450;
+
 	private Subject<ImageEvent> imageSelected = new Subject<ImageEvent>();
 	private Subject<Double> scaleChanged = new Subject<Double>();
 	private BufferedImage image;
@@ -52,52 +55,11 @@ public class ImageComponent extends JComponent {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (!input) {
-				return;
-			}
 			if (e.getButton() != MouseEvent.BUTTON1) {
 				return;
 			}
 
-			JFileChooser chooser = new JFileChooser(Cache.get("ImageDirectory"));
-
-			chooser.setFileFilter(new FileFilter() {
-				@Override
-				public String getDescription() {
-					return "Image Files (*.png, *.jpg, *.jpeg, *.gif, *.bmp)";
-				}
-
-				@Override
-				public boolean accept(File f) {
-					String p = f.getPath().toLowerCase();
-					return f.isDirectory() || p.endsWith(".png") || p.endsWith(".jpg") || p.endsWith(".jpeg")
-							|| p.endsWith(".bmp") || p.endsWith(".gif");
-				}
-			});
-
-			if (chooser.showOpenDialog(Main.FRAME) == JFileChooser.APPROVE_OPTION) {
-				File file = chooser.getSelectedFile();
-				try {
-					image = ImageIO.read(file);
-				} catch (IOException ex) {
-					Program.exit(ex);
-					return;
-				}
-				if (image == null) {
-					return;
-				}
-
-				resize(image);
-				renderImage = ImageUtility.scale(image, getWidth(), getHeight());
-
-				ImageComponent.this.file = file;
-				refresh();
-
-				Cache.save("ImageDirectory", file.getParentFile().getAbsolutePath());
-
-				imageSelected.markChanged();
-				imageSelected.notifyObservers(new ImageEvent(file, image));
-			}
+			selectFile();
 		}
 	};
 
@@ -105,10 +67,56 @@ public class ImageComponent extends JComponent {
 		if (imageFile != null) {
 			setImage(imageFile);
 		} else {
-			this.setPreferredSize(new Dimension(400, 300));
+			this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 		}
 
 		this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+	}
+
+	public void selectFile() {
+		if (!input) {
+			return;
+		}
+
+		JFileChooser chooser = new JFileChooser(Cache.get("ImageDirectory"));
+
+		chooser.setFileFilter(new FileFilter() {
+			@Override
+			public String getDescription() {
+				return "Image Files (*.png, *.jpg, *.jpeg, *.gif, *.bmp)";
+			}
+
+			@Override
+			public boolean accept(File f) {
+				String p = f.getPath().toLowerCase();
+				return f.isDirectory() || p.endsWith(".png") || p.endsWith(".jpg") || p.endsWith(".jpeg")
+						|| p.endsWith(".bmp") || p.endsWith(".gif");
+			}
+		});
+
+		if (chooser.showOpenDialog(Main.FRAME) == JFileChooser.APPROVE_OPTION) {
+			File file = chooser.getSelectedFile();
+			try {
+				image = ImageIO.read(file);
+			} catch (IOException ex) {
+				Program.exit(ex);
+				return;
+			}
+			if (image == null) {
+				return;
+			}
+
+			resize(image);
+			renderImage = ImageUtility.scale(image, getWidth(), getHeight());
+
+			ImageComponent.this.file = file;
+			refresh();
+
+			Cache.save("ImageDirectory", file.getParentFile().getAbsolutePath());
+
+			imageSelected.markChanged();
+			imageSelected.notifyObservers(new ImageEvent(file, image));
+		}
 	}
 
 	public boolean isGreyscale() {

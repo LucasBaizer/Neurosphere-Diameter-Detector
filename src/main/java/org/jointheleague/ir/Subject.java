@@ -6,7 +6,7 @@ import java.util.List;
 public class Subject<T> {
 	private List<Observer<T>> observers = new ArrayList<Observer<T>>();
 	private boolean changed;
-
+	
 	public int getObserverCount() {
 		return observers.size();
 	}
