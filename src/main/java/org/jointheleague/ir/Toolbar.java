@@ -10,6 +10,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.jointheleague.ir.dialog.Popup;
+
 public class Toolbar extends JMenuBar {
 	private static final long serialVersionUID = 4933781209241086901L;
 
@@ -81,7 +83,7 @@ public class Toolbar extends JMenuBar {
 				// TODO
 			}, null));
 			add(item("About", () -> {
-				// TODO
+				Popup.create("About", "About");
 			}, null));
 		}
 	}

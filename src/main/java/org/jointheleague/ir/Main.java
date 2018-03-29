@@ -18,7 +18,7 @@ public class Main {
 
 		JFrame frame = new JFrame(Program.APPLICATION_NAME);
 		frame.setJMenuBar(new Toolbar());
-		frame.add(new UIPanel());
+		frame.getContentPane().add(new UIPanel());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		frame.pack();

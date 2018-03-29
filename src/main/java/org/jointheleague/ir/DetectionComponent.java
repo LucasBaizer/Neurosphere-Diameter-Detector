@@ -25,6 +25,7 @@ public class DetectionComponent extends JComponent {
 	private static final long serialVersionUID = 3758238562426778363L;
 
 	private Point selectedPoint;
+	private Color color = Color.GREEN;
 	private int actualDiameter;
 	private boolean selected;
 	private boolean destroyed;
@@ -47,6 +48,7 @@ public class DetectionComponent extends JComponent {
 			public void mousePressed(MouseEvent e) {
 				selected = true;
 				selectedPoint = e.getPoint();
+				color = Color.GREEN;
 				repaint();
 
 				requestFocus();
@@ -54,10 +56,6 @@ public class DetectionComponent extends JComponent {
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				if (destroyed) {
-					return;
-				}
-
 				Point pt = e.getPoint();
 				SwingUtilities.convertPointToScreen(pt, DetectionComponent.this);
 				SwingUtilities.convertPointFromScreen(pt, getParent());
@@ -73,10 +71,6 @@ public class DetectionComponent extends JComponent {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (destroyed) {
-					return;
-				}
-
 				selected = false;
 				selectedPoint = null;
 				repaint();
@@ -84,10 +78,6 @@ public class DetectionComponent extends JComponent {
 
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
-				if (destroyed) {
-					return;
-				}
-
 				if (selected) {
 					Dimension size = getSize();
 					size.width += (deltaScale * e.getWheelRotation());
@@ -130,7 +120,11 @@ public class DetectionComponent extends JComponent {
 
 				list.remove(detection);
 
-				getParent().remove(DetectionComponent.this);
+				repaint();
+
+				// we don't remove from the parent because it stops rendering
+				// and there's no cleanup... and we can't manually cleanup by
+				// calling repaint... just Swing things
 			}
 		});
 	}
@@ -139,12 +133,16 @@ public class DetectionComponent extends JComponent {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
+		if (destroyed) {
+			return;
+		}
+
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setFont(getFont());
 		if (selected) {
 			g2d.setColor(new Color(50, 220, 50));
 		} else {
-			g2d.setColor(Color.GREEN);
+			g2d.setColor(color);
 		}
 		g2d.setStroke(new BasicStroke(2f));
 		g2d.draw(new Ellipse2D.Double(0, 0, getWidth(), getHeight()));
@@ -154,5 +152,13 @@ public class DetectionComponent extends JComponent {
 				+ "μm";
 		g.drawString(text, (getWidth() - metrics.stringWidth(text)) / 2,
 				((getHeight() - metrics.getHeight()) / 2) + metrics.getAscent());
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
 	}
 }

@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -125,7 +126,21 @@ public class UIPanel extends JPanel {
 		c.gridy = 3;
 		add(detect, c);
 
+		JPanel outputTools = new JPanel();
+		outputTools.setLayout(new BoxLayout(outputTools, BoxLayout.Y_AXIS));
+
+		JButton addButton = new JButton("Add");
+		addButton.setEnabled(false);
+
+		outputTools.add(addButton);
+
+		c.gridx = 3;
+		c.gridy = 1;
+		add(outputTools, c);
+
 		ic.onScaleChanged().addObserver((source, scale) -> {
+			addButton.setEnabled(false);
+
 			outputTime.setText("");
 			outputCircles.setText("");
 			outputAverage.setText("");
@@ -183,6 +198,12 @@ public class UIPanel extends JPanel {
 				blurred.refresh();
 			});
 			Thread detectorThread = new Thread(() -> {
+				addButton.setEnabled(false);
+
+				if (addButton.getActionListeners().length > 0) {
+					addButton.removeActionListener(addButton.getActionListeners()[0]);
+				}
+
 				outputTime.setText("");
 				outputCircles.setText("");
 				outputAverage.setText("");
@@ -237,6 +258,21 @@ public class UIPanel extends JPanel {
 				outputAverage.setText("Average "
 						+ (int) Measurement.PIXELS.convert(Measurement.MICROMETERS, detected.getAverageDiameter())
 						+ "μm");
+
+				addButton.setEnabled(true);
+				addButton.addActionListener(event -> {
+					Detection detec = new Detection(
+							new Point(ic.getImage().getWidth() / 2, ic.getImage().getHeight() / 2),
+							detected.getAverageDiameter() / 2);
+
+					detected.add(detec);
+
+					DetectionComponent comp = new DetectionComponent(detected, detec, ic.getScale());
+					comp.setColor(Color.RED);
+					output.add(comp);
+					output.revalidate();
+					output.repaint();
+				});
 
 				detected.onListChanged().addObserver((source, detection) -> {
 					outputCircles.setText(detected.size() + " neurospheres");
