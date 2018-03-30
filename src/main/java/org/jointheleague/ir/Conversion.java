@@ -13,6 +13,10 @@ public class Conversion {
 		Fraction conversion = Measurement.CONVERSIONS.get(this);
 		return val * conversion.doubleValue();
 	}
+	
+	public Conversion inverse() {
+		return new Conversion(to, from);
+	}
 
 	public Measurement getFrom() {
 		return from;

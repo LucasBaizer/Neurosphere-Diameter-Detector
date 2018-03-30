@@ -15,6 +15,14 @@ public class Fraction extends Number {
 		this.denominator = den;
 	}
 
+	public static Fraction parseFraction(String frac) {
+		String[] spl = frac.split("/");
+		int num = Integer.parseInt(spl[0]);
+		int den = Integer.parseInt(spl[1]);
+
+		return new Fraction(num, den);
+	}
+
 	public int getNumerator() {
 		return numerator;
 	}

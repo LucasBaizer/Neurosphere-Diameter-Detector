@@ -15,15 +15,20 @@
   </properties>
 
   <dependencies>
-      <dependency>
-    <groupId>org.bytedeco</groupId>
-    <artifactId>javacv-platform</artifactId>
-    <version>1.4</version>
-  </dependency>
-  <dependency>
-    <groupId>com.atlassian.commonmark</groupId>
-    <artifactId>commonmark</artifactId>
-    <version>0.11.0</version>
-</dependency>
+    <dependency>
+      <groupId>org.bytedeco</groupId>
+      <artifactId>javacv-platform</artifactId>
+      <version>1.4</version>
+    </dependency>
+    <dependency>
+        <groupId>com.atlassian.commonmark</groupId>
+        <artifactId>commonmark</artifactId>
+        <version>0.11.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-csv</artifactId>
+        <version>1.5</version>
+    </dependency>
   </dependencies>
 </project>

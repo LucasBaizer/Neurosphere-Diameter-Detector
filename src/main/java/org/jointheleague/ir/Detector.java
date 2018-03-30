@@ -37,8 +37,8 @@ public class Detector {
 	}
 
 	public void initialize() throws IOException {
-		this.src = cvLoadImage(file.getName());
-		this.output = cvLoadImage(file.getName());
+		this.src = cvLoadImage(file.getAbsolutePath());
+		this.output = cvLoadImage(file.getAbsolutePath());
 		this.gray = cvCreateImage(src.cvSize(), 8, 1);
 	}
 

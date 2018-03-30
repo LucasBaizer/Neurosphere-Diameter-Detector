@@ -25,9 +25,13 @@ public class Cache {
 		}
 
 		ensure("ImageDirectory", System.getProperty("user.home"));
+		ensure("SaveDirectory", System.getProperty("user.home"));
 		ensure("BlurFactor", "1.0");
 		ensure("MinimumSize", "100");
 		ensure("MinimumDistance", "200");
+		ensure("Delimiter", ",");
+		ensure("pixels->micrometers", "100/55");
+		ensure("micrometers->pixels", "55/100");
 	}
 
 	private static void ensure(String key, String value) {

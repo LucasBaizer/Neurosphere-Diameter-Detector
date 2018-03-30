@@ -2,15 +2,15 @@ package org.jointheleague.ir;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 
 import javax.swing.AbstractAction;
+import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-
-import org.jointheleague.ir.dialog.Popup;
 
 public class Toolbar extends JMenuBar {
 	private static final long serialVersionUID = 4933781209241086901L;
@@ -68,7 +68,28 @@ public class Toolbar extends JMenuBar {
 			super("Data");
 
 			add(item("Measurements", () -> {
-				// TODO
+				JDialog dialog = new JDialog(Main.FRAME, "Measurements");
+
+				MeasurementPanel panel = new MeasurementPanel(dialog);
+				panel.onExit().addObserver((source, none) -> {
+					BufferedImage img = UIPanel.getInstance().getInputComponent().getImage();
+
+					if (!UIPanel.getInstance().getImageSizeMicrometers().getText().isEmpty()) {
+						UIPanel.getInstance().getImageSizeMicrometers()
+								.setText((int) Measurement.PIXELS.convert(Measurement.MICROMETERS, img.getWidth()) + "x"
+										+ (int) Measurement.PIXELS.convert(Measurement.MICROMETERS, img.getHeight())
+										+ " μm");
+
+						if (!UIPanel.getInstance().getOutputAverage().getText().isEmpty()) {
+							UIPanel.getInstance().getDetectButton().getActionListeners()[0]
+									.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+						}
+					}
+				});
+
+				dialog.getContentPane().add(panel);
+				dialog.setVisible(true);
+				dialog.pack();
 			}, null));
 		}
 	}
@@ -80,10 +101,14 @@ public class Toolbar extends JMenuBar {
 			super("Help");
 
 			add(item("Manual", () -> {
-				// TODO
+				Popup.create("Manual", "TableOfContents");
 			}, null));
+			addSeparator();
 			add(item("About", () -> {
 				Popup.create("About", "About");
+			}, null));
+			add(item("License", () -> {
+				Popup.create("License", "License");
 			}, null));
 		}
 	}

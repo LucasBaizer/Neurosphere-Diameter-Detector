@@ -26,6 +26,10 @@ public class Program {
 	private static File dataFolder;
 	private static File cacheFile;
 
+	public static File getDataFolder() {
+		return dataFolder;
+	}
+
 	public static File getAsset(String asset) {
 		return new File(dataFolder.getAbsolutePath() + File.separator + asset);
 	}
@@ -54,10 +58,13 @@ public class Program {
 				webContent.mkdir();
 			}
 
+			copyWebContent("Load.html");
+
 			download("web/resources/bootstrap.min.css",
 					"http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css");
 
-			InputStream in = Program.class.getResourceAsStream("/webcontent/WebContent.txt");
+			// in the future, this will happen from the web
+			InputStream in = Program.class.getResourceAsStream("/web/content/WebContent.txt");
 			byte[] buffer = new byte[in.available()];
 			in.read(buffer);
 			in.close();
@@ -71,11 +78,11 @@ public class Program {
 
 				for (Map.Entry<String, String> builtinEntry : builtinMap.entrySet()) {
 					if (!currentMap.containsKey(builtinEntry.getKey())) {
-						copyWebContent(builtinEntry.getKey());
+						copyWebContent(builtinEntry.getKey() + ".md");
 					} else {
 						String currentVersion = currentMap.get(builtinEntry.getKey());
 						if (currentVersion.compareTo(builtinEntry.getValue()) < 0) {
-							copyWebContent(builtinEntry.getKey());
+							copyWebContent(builtinEntry.getKey() + ".md");
 						}
 					}
 				}
@@ -86,7 +93,7 @@ public class Program {
 				Files.write(currentWebContent.toPath(), buffer);
 
 				for (String key : builtinMap.keySet()) {
-					copyWebContent(key);
+					copyWebContent(key + ".md");
 				}
 			}
 
@@ -113,9 +120,9 @@ public class Program {
 	}
 
 	private static void copyWebContent(String name) throws IOException {
-		File targetFile = getAsset("web/content/" + name + ".md");
+		File targetFile = getAsset("web/content/" + name);
 
-		InputStream in = Program.class.getResourceAsStream("/webcontent/" + name + ".md");
+		InputStream in = Program.class.getResourceAsStream("/web/content/" + name);
 		byte[] buffer = new byte[in.available()];
 		in.read(buffer);
 		in.close();
@@ -152,8 +159,9 @@ public class Program {
 	public static void exit(Throwable ex) {
 		ex.printStackTrace();
 
-		JOptionPane.showMessageDialog(null, "Oh no! The application crashed. Please report this to the developer.",
-				APPLICATION_NAME, JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(Main.FRAME,
+				"Oh no! The application crashed. Please report this to the developer.", APPLICATION_NAME,
+				JOptionPane.ERROR_MESSAGE);
 
 		File crashReport = new File(dataFolder,
 				"Crash-" + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()) + ".txt");

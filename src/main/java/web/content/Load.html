@@ -1,0 +1,37 @@
+<html>
+<head>
+<style>
+.loader {
+	border: 16px solid #f3f3f3;
+	border-radius: 50%;
+	border-top: 16px solid #3498db;
+	width: 120px;
+	height: 120px;
+}
+</style>
+<script>
+	var rotate = 0;
+
+	function start() {
+		setInterval(
+				function() {
+					document.getElementById("loading-icon").style.webkitTransform = "rotate("
+							+ rotate + "deg)";
+					rotate += 3;
+
+					if (rotate == 360) {
+						rotate = 0;
+					}
+				}, 5);
+	}
+</script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+</head>
+<body onLoad="start()">
+	<div id="container" style="margin: 0 auto; width: 50%;">
+		<h1>Loading...</h1>
+		<div id="loading-icon" class="loader"></div>
+	</div>
+</body>
+</html>

@@ -13,6 +13,7 @@ import java.math.MathContext;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -25,6 +26,9 @@ public class UIPanel extends JPanel {
 
 	private static UIPanel instance;
 	private ImageComponent ic;
+	private JLabel imageSizeMicrometers;
+	private JLabel outputAverage;
+	private JButton detectButton;
 
 	public static UIPanel getInstance() {
 		return instance;
@@ -36,18 +40,21 @@ public class UIPanel extends JPanel {
 		setLayout(new GridBagLayout());
 
 		GridBagConstraints c = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.FIRST_LINE_START,
-				GridBagConstraints.RELATIVE, new Insets(2, 2, 2, 2), 0, 0);
+				GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0);
 
 		JPanel info = new JPanel();
 		info.setLayout(new BoxLayout(info, BoxLayout.X_AXIS));
 
 		JLabel imageName = new JLabel("No Image Selected");
 		JLabel imageSize = new JLabel("");
+		JLabel imageSizeUm = imageSizeMicrometers = new JLabel("");
 		JLabel greyscale = new JLabel("");
 		JLabel compression = new JLabel("");
 		info.add(imageName);
 		info.add(Box.createRigidArea(new Dimension(20, 0)));
 		info.add(imageSize);
+		info.add(Box.createRigidArea(new Dimension(20, 0)));
+		info.add(imageSizeUm);
 		info.add(Box.createRigidArea(new Dimension(20, 0)));
 		info.add(greyscale);
 		info.add(Box.createRigidArea(new Dimension(20, 0)));
@@ -60,6 +67,9 @@ public class UIPanel extends JPanel {
 		ic.onImageSelected().addObserver((source, event) -> {
 			imageName.setText(event.getSourceFile().getName());
 			imageSize.setText(event.getImage().getWidth() + "x" + event.getImage().getHeight() + " px");
+			imageSizeUm.setText((int) Measurement.PIXELS.convert(Measurement.MICROMETERS, event.getImage().getWidth())
+					+ "x" + (int) Measurement.PIXELS.convert(Measurement.MICROMETERS, event.getImage().getHeight())
+					+ " μm");
 			greyscale.setText(ic.isGreyscale() ? "Greyscale" : "Not Greyscale");
 
 			if (event.getSourceFile().getName().toLowerCase().endsWith(".png")) {
@@ -85,7 +95,7 @@ public class UIPanel extends JPanel {
 
 		JLabel outputTime = new JLabel("");
 		JLabel outputCircles = new JLabel("");
-		JLabel outputAverage = new JLabel("");
+		JLabel outputAverage = this.outputAverage = new JLabel("");
 		outputInfo.add(outputTime);
 		outputInfo.add(Box.createRigidArea(new Dimension(20, 0)));
 		outputInfo.add(outputCircles);
@@ -121,7 +131,7 @@ public class UIPanel extends JPanel {
 		c.gridy = 2;
 		add(params, c);
 
-		JButton detect = new JButton("Measure");
+		JButton detect = detectButton = new JButton("Measure");
 		c.gridx = 0;
 		c.gridy = 3;
 		add(detect, c);
@@ -130,9 +140,12 @@ public class UIPanel extends JPanel {
 		outputTools.setLayout(new BoxLayout(outputTools, BoxLayout.Y_AXIS));
 
 		JButton addButton = new JButton("Add");
+		JButton exportButton = new JButton("Export");
 		addButton.setEnabled(false);
+		exportButton.setEnabled(false);
 
 		outputTools.add(addButton);
+		outputTools.add(exportButton);
 
 		c.gridx = 3;
 		c.gridy = 1;
@@ -140,6 +153,7 @@ public class UIPanel extends JPanel {
 
 		ic.onScaleChanged().addObserver((source, scale) -> {
 			addButton.setEnabled(false);
+			exportButton.setEnabled(false);
 
 			outputTime.setText("");
 			outputCircles.setText("");
@@ -199,9 +213,13 @@ public class UIPanel extends JPanel {
 			});
 			Thread detectorThread = new Thread(() -> {
 				addButton.setEnabled(false);
+				exportButton.setEnabled(false);
 
 				if (addButton.getActionListeners().length > 0) {
 					addButton.removeActionListener(addButton.getActionListeners()[0]);
+				}
+				if (exportButton.getActionListeners().length > 0) {
+					exportButton.removeActionListener(exportButton.getActionListeners()[0]);
 				}
 
 				outputTime.setText("");
@@ -260,6 +278,7 @@ public class UIPanel extends JPanel {
 						+ "μm");
 
 				addButton.setEnabled(true);
+				exportButton.setEnabled(true);
 				addButton.addActionListener(event -> {
 					Detection detec = new Detection(
 							new Point(ic.getImage().getWidth() / 2, ic.getImage().getHeight() / 2),
@@ -272,6 +291,16 @@ public class UIPanel extends JPanel {
 					output.add(comp);
 					output.revalidate();
 					output.repaint();
+				});
+				exportButton.addActionListener(event -> {
+					JDialog dialog = new JDialog(Main.FRAME, "Export");
+					dialog.getContentPane().add(new ExportPanel(dialog, ic.getSelectedFile().getName(), detected));
+					dialog.setVisible(true);
+
+					Dimension size = dialog.getPreferredSize();
+					size.width *= 1.3;
+					size.height *= 1.3;
+					dialog.setSize(size);
 				});
 
 				detected.onListChanged().addObserver((source, detection) -> {
@@ -287,5 +316,17 @@ public class UIPanel extends JPanel {
 
 	public ImageComponent getInputComponent() {
 		return ic;
+	}
+
+	public JLabel getImageSizeMicrometers() {
+		return imageSizeMicrometers;
+	}
+
+	public JButton getDetectButton() {
+		return detectButton;
+	}
+
+	public JLabel getOutputAverage() {
+		return outputAverage;
 	}
 }
