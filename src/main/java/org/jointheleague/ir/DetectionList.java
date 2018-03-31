@@ -10,7 +10,11 @@ public class DetectionList extends ArrayList<Detection> {
 	public DetectionList() {
 		super();
 	}
-	
+
+	public DetectionList(int size) {
+		super(size);
+	}
+
 	public int getAverageDiameter() {
 		int totalDiameter = 0;
 		for (Detection detection : this) {
@@ -37,7 +41,17 @@ public class DetectionList extends ArrayList<Detection> {
 
 		if (x) {
 			listChanged.markChanged();
-			listChanged.notifyObservers(new ListEvent<Detection>(ListEvent.REMOVE, (Detection) e)); // this is not type-safe, but we'll just trust ourselves for now
+			listChanged.notifyObservers(new ListEvent<Detection>(ListEvent.REMOVE, (Detection) e)); // this
+																									// is
+																									// not
+																									// type-safe,
+																									// but
+																									// we'll
+																									// just
+																									// trust
+																									// ourselves
+																									// for
+																									// now
 		}
 
 		return x;

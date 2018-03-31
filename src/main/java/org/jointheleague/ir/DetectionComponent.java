@@ -61,10 +61,7 @@ public class DetectionComponent extends JComponent {
 				SwingUtilities.convertPointFromScreen(pt, getParent());
 
 				setLocation(pt.x - selectedPoint.x, pt.y - selectedPoint.y);
-				detection.setCenter(getLocation()); // TODO is this necessary?
-
-				// list.onListChanged().notifyObservers(new
-				// ListEvent<Detection>(ListEvent.MANUAL, detection));
+				detection.setCenter(new Point((int) (getLocation().x / scale), (int) (getLocation().y / scale)));
 
 				repaint();
 			}

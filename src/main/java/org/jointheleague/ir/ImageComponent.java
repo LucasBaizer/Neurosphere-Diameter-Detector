@@ -32,7 +32,7 @@ import org.bytedeco.javacpp.opencv_imgcodecs;
 public class ImageComponent extends JComponent {
 	private static final long serialVersionUID = -2546741406493029667L;
 
-	public static final int DEFAULT_WIDTH = 600;
+	public static final int DEFAULT_WIDTH = 550;
 	public static final int DEFAULT_HEIGHT = 450;
 
 	private Subject<ImageEvent> imageSelected = new Subject<ImageEvent>();

@@ -45,7 +45,7 @@ public class Toolbar extends JMenuBar {
 			super("File");
 
 			add(item("Open", () -> {
-				UIPanel.getInstance().getInputComponent().selectFile();
+				MeasurePanel.getInstance().getInputComponent().selectFile();
 			}, KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK)));
 
 			add(item("Open All", () -> {
@@ -72,16 +72,16 @@ public class Toolbar extends JMenuBar {
 
 				MeasurementPanel panel = new MeasurementPanel(dialog);
 				panel.onExit().addObserver((source, none) -> {
-					BufferedImage img = UIPanel.getInstance().getInputComponent().getImage();
+					BufferedImage img = MeasurePanel.getInstance().getInputComponent().getImage();
 
-					if (!UIPanel.getInstance().getImageSizeMicrometers().getText().isEmpty()) {
-						UIPanel.getInstance().getImageSizeMicrometers()
+					if (!MeasurePanel.getInstance().getImageSizeMicrometers().getText().isEmpty()) {
+						MeasurePanel.getInstance().getImageSizeMicrometers()
 								.setText((int) Measurement.PIXELS.convert(Measurement.MICROMETERS, img.getWidth()) + "x"
 										+ (int) Measurement.PIXELS.convert(Measurement.MICROMETERS, img.getHeight())
 										+ " μm");
 
-						if (!UIPanel.getInstance().getOutputAverage().getText().isEmpty()) {
-							UIPanel.getInstance().getDetectButton().getActionListeners()[0]
+						if (!MeasurePanel.getInstance().getOutputAverage().getText().isEmpty()) {
+							MeasurePanel.getInstance().getDetectButton().getActionListeners()[0]
 									.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
 						}
 					}

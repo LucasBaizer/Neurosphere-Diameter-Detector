@@ -8,6 +8,10 @@ import javafx.stage.Stage;
 
 public class JavaFXMain extends Application {
 	static {
+		Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+			Program.exit(throwable);
+		});
+
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {

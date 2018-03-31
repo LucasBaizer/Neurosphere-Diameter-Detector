@@ -21,3 +21,6 @@ sampledata.jpg
 
 # Maven compile directory
 target
+
+# Releases
+builds

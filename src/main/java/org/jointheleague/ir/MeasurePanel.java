@@ -21,20 +21,20 @@ import javax.swing.JTextField;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
 
-public class UIPanel extends JPanel {
+public class MeasurePanel extends JPanel {
 	private static final long serialVersionUID = 5677751569635467335L;
 
-	private static UIPanel instance;
+	private static MeasurePanel instance;
 	private ImageComponent ic;
 	private JLabel imageSizeMicrometers;
 	private JLabel outputAverage;
 	private JButton detectButton;
 
-	public static UIPanel getInstance() {
+	public static MeasurePanel getInstance() {
 		return instance;
 	}
 
-	public UIPanel() {
+	public MeasurePanel() {
 		instance = this;
 
 		setLayout(new GridBagLayout());
