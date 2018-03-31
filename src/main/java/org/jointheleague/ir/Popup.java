@@ -59,9 +59,10 @@ public class Popup {
 				webView.getEngine().loadContent(finalHtml);
 				webView.getEngine().getLoadWorker().stateProperty().addListener(new WebViewRedirectListener(webView));
 
-				dialog.setVisible(true);
 				if (!url.equals("Load")) {
 					dialog.pack();
+					dialog.setLocationRelativeTo(Main.FRAME);
+					dialog.setVisible(true);
 				}
 			});
 		});

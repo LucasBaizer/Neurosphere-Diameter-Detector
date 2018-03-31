@@ -15,7 +15,7 @@ public class DetectionPanel extends JPanel {
 
 	private String backgroundText = null;
 	private BufferedImage image;
-	
+
 	public DetectionPanel(Dimension size) {
 		setLayout(null);
 		setPreferredSize(size);

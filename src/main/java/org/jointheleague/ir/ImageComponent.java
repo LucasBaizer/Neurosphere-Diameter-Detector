@@ -230,6 +230,9 @@ public class ImageComponent extends JComponent {
 		super.paintComponent(g);
 
 		if (image == null) {
+			g.setColor(getBackground());
+			g.fillRect(0, 0, getWidth(), getHeight());
+
 			if (backgroundText != null) {
 				g.setColor(Color.BLACK);
 				g.setFont(new Font("Arial", Font.BOLD, getWidth() / 25));

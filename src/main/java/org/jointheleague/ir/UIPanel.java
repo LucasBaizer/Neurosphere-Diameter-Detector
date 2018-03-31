@@ -169,8 +169,8 @@ public class UIPanel extends JPanel {
 		});
 		detect.addActionListener(e -> {
 			if (ic.getImage() == null) {
-				JOptionPane.showMessageDialog(null, "Please select an image to measure.", Program.APPLICATION_NAME,
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Main.FRAME, "Please select an image to measure.",
+						Program.APPLICATION_NAME, JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -178,7 +178,7 @@ public class UIPanel extends JPanel {
 			try {
 				blur = Double.parseDouble(blurFactor.getText());
 			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(null, "Please input a valid blur amount.", Program.APPLICATION_NAME,
+				JOptionPane.showMessageDialog(Main.FRAME, "Please input a valid blur amount.", Program.APPLICATION_NAME,
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -187,8 +187,8 @@ public class UIPanel extends JPanel {
 			try {
 				min = Double.parseDouble(minimumSize.getText());
 			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(null, "Please input a valid minimum size.", Program.APPLICATION_NAME,
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Main.FRAME, "Please input a valid minimum size.",
+						Program.APPLICATION_NAME, JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -196,8 +196,8 @@ public class UIPanel extends JPanel {
 			try {
 				dist = Double.parseDouble(minimumDist.getText());
 			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(null, "Please input a valid minimum distance.", Program.APPLICATION_NAME,
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Main.FRAME, "Please input a valid minimum distance.",
+						Program.APPLICATION_NAME, JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -295,12 +295,14 @@ public class UIPanel extends JPanel {
 				exportButton.addActionListener(event -> {
 					JDialog dialog = new JDialog(Main.FRAME, "Export");
 					dialog.getContentPane().add(new ExportPanel(dialog, ic.getSelectedFile().getName(), detected));
-					dialog.setVisible(true);
 
 					Dimension size = dialog.getPreferredSize();
 					size.width *= 1.3;
 					size.height *= 1.3;
 					dialog.setSize(size);
+					dialog.setLocationRelativeTo(Main.FRAME);
+
+					dialog.setVisible(true);
 				});
 
 				detected.onListChanged().addObserver((source, detection) -> {

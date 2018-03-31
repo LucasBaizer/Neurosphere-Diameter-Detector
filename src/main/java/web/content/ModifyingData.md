@@ -6,7 +6,7 @@ After data has been generated, there are a few common mistakes with the detectio
 * Off-center detections.
 * Detections which are either bigger or smaller than their organoid.
 
-Luckily, be can efficiently fix all of these problems.
+Luckily, we can efficiently fix all of these problems.
 
 ### Creating Detections
 If an organoid is not detected, you can easily create a new detection to do so.

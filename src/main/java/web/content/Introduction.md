@@ -7,7 +7,7 @@ Below the first image component, there are some parameters, which are also expla
 In the menu bar, there are 3 menus- File, Data, and Help.
 The File menu is discussed in section 1.2, and the Data menu is discussed in [1.5 Configuring]($LOCAL/Configuring.md).
 The Help menu is used to get where you are right now-- the documentation!
-It also has a bit about this application, and all the necessary licensing for this applicaton and the libraries it uses.
+It also has a bit about this application along with the licensing for the libraries it uses.
 
 ### Next up: [1.2 Basic Usage]($LOCAL/BasicUsage.md)
 

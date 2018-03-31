@@ -49,12 +49,12 @@ public class Toolbar extends JMenuBar {
 			}, KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK)));
 
 			add(item("Open All", () -> {
-				JOptionPane.showMessageDialog(null, "Batching files is not implemented yet. Check back in soon!",
+				JOptionPane.showMessageDialog(Main.FRAME, "Batching files is not implemented yet. Check back in soon!",
 						Program.APPLICATION_NAME, JOptionPane.INFORMATION_MESSAGE);
 			}, KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK)));
 
 			add(item("Import", () -> {
-				JOptionPane.showMessageDialog(null,
+				JOptionPane.showMessageDialog(Main.FRAME,
 						"Importing application databases in not implemented yet. Check back in soon!",
 						Program.APPLICATION_NAME, JOptionPane.INFORMATION_MESSAGE);
 			}, KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK)));
@@ -88,8 +88,9 @@ public class Toolbar extends JMenuBar {
 				});
 
 				dialog.getContentPane().add(panel);
-				dialog.setVisible(true);
 				dialog.pack();
+				dialog.setLocationRelativeTo(Main.FRAME);
+				dialog.setVisible(true);
 			}, null));
 		}
 	}

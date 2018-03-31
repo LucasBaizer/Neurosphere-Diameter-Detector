@@ -1,5 +1,8 @@
 package org.jointheleague.ir;
 
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -19,6 +22,7 @@ public class Main {
 
 		try {
 			JDialog dialog = Popup.create(Program.APPLICATION_NAME, "Load");
+			dialog.setUndecorated(true);
 			dialog.setSize(300, 300);
 			dialog.addWindowListener(new WindowAdapter() {
 				@Override
@@ -26,6 +30,11 @@ public class Main {
 					System.exit(0);
 				}
 			});
+
+			Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+			Point center = new Point(dim.width / 2 - 150, dim.height / 2 - 150);
+			dialog.setLocation(center);
+			dialog.setVisible(true);
 
 			InputStream in = Program.class.getResourceAsStream("/img/warmup.jpg");
 			byte[] buffer = new byte[in.available()];
@@ -45,6 +54,7 @@ public class Main {
 			detector.detect();
 
 			dialog.removeWindowListener(dialog.getWindowListeners()[0]);
+			dialog.getContentPane().removeAll();
 			dialog.dispose();
 
 			tmp.delete();
@@ -56,8 +66,13 @@ public class Main {
 		frame.setJMenuBar(new Toolbar());
 		frame.getContentPane().add(new UIPanel());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
 		frame.pack();
+
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		Point center = new Point(dim.width / 2 - frame.getWidth() / 2, 100);
+		frame.setLocation(center);
+
+		frame.setVisible(true);
 
 		FRAME = frame;
 
@@ -66,7 +81,8 @@ public class Main {
 			Object[] message = {
 					"Welcome! For help with the application, navigate to Help -> Manual in the menu bar at the top.",
 					box };
-			JOptionPane.showMessageDialog(null, message, Program.APPLICATION_NAME, JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(Main.FRAME, message, Program.APPLICATION_NAME,
+					JOptionPane.INFORMATION_MESSAGE);
 			if (box.isSelected()) {
 				Cache.save("ShowHelp", "false");
 			}

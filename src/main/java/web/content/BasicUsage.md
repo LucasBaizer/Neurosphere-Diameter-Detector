@@ -20,9 +20,9 @@ There are 3 ways to input an image into this image component:
 
 * Navigate to the File menu in the toolbar, and then click on Open.
   You can also use the shortcut for this, which is Ctrl+O.
-  A file explorer will pop up, and you can navigate to image that you want to use.
+  A file explorer will pop up, and you can navigate to that image that you want to use.
   Currently, PNG, JPG, BMP, and GIF formats are supported.
-* Another way to input a file is my clicking on the first image component.
+* Another way to input a file is by clicking on the first image component.
   This will also open a file explorer.
 * The third way to input a file is by dragging an image file into the first image component.
   For example, in your system's file explorer, an image file can be dragged onto the first image component.
@@ -70,7 +70,7 @@ Editing the detections in the output is discussed in [1.3 Modifying Data]($LOCAL
 
 ### <a id="part-5"></a>Output Analytics
 
-After output is generated, there is some data displayed above the output image component, similar to the input.
+After the output is generated, there is some data displayed above the output image component, similar to the input.
 * The first piece of data is how long it took for the detection to take place in seconds.
 * The second is the total amount of organoids that have been detected.
 * The third is the average diameter of the organoids, in micrometers.
