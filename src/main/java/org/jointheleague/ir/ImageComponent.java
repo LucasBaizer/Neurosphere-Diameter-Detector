@@ -107,7 +107,7 @@ public class ImageComponent extends JComponent {
 			}
 
 			resize(image);
-			renderImage = ImageUtility.scale(image, getWidth(), getHeight());
+			renderImage = ImageUtility.scale(image, getPreferredSize().width, getPreferredSize().height);
 
 			ImageComponent.this.file = file;
 			refresh();
@@ -141,13 +141,12 @@ public class ImageComponent extends JComponent {
 			return;
 		}
 
-		double ratio = (double) getWidth() / image.getWidth();
+		double ratio = getWidth() / (double) image.getWidth();
 		this.scale = ratio;
 
-		double newImageHeight = image.getHeight() * ratio;
-		double scale = getHeight() / newImageHeight;
+		double imageHeight = image.getHeight() * ratio;
 
-		setPreferredSize(new Dimension(getWidth(), (int) (getHeight() * scale)));
+		setPreferredSize(new Dimension(getWidth(), (int) imageHeight));
 
 		scaleChanged.markChanged();
 		scaleChanged.notifyObservers(this.scale);

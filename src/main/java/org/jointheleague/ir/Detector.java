@@ -4,6 +4,8 @@ import static org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.opencv_imgcodecs.*;
 import static org.bytedeco.javacpp.opencv_imgproc.*;
 
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -64,11 +66,14 @@ public class Detector {
 				minSizePixels);
 		DetectionList detections = new DetectionList();
 
+		BufferedImage img = ImageUtility.toBufferedImage(src);
+		Graphics g = img.createGraphics();
 		for (int i = 0; i < circles.total(); i++) {
 			CvPoint3D32f circle = new CvPoint3D32f(cvGetSeqElem(circles, i));
 			CvPoint center = cvPointFrom32f(new CvPoint2D32f(circle.x(), circle.y()));
 			int radius = Math.round(circle.z());
 
+			g.drawOval(center.x() - radius, center.y() - radius, radius * 2, radius * 2);
 			detections.add(new Detection(new java.awt.Point(center.x(), center.y()), radius));
 
 			circle.close();

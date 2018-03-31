@@ -89,14 +89,20 @@ public class ExportPanel extends JPanel {
 		fileField.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
+				update(e);
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
+				update(e);
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {
+				update(e);
+			}
+
+			private void update(DocumentEvent e) {
 				try {
 					ExportPanel.this.fileName = e.getDocument().getText(0, e.getDocument().getLength()) + ".csv";
 				} catch (BadLocationException ex) {

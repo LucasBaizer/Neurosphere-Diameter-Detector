@@ -36,7 +36,10 @@ public class Program {
 
 	public static void initialize() {
 		try {
-			dataFolder = new File(System.getenv("AppData"), APPLICATION_INTERNAL);
+			dataFolder = new File(
+					System.getProperty("os.name").toLowerCase().startsWith("win") ? System.getenv("AppData")
+							: System.getProperty("user.home") + "/Library/Application Support",
+					APPLICATION_INTERNAL);
 			cacheFile = new File(dataFolder, ".cache");
 
 			if (!dataFolder.exists()) {

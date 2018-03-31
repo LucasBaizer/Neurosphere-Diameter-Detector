@@ -56,6 +56,9 @@ public class DetectionComponent extends JComponent {
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
+				if (selectedPoint == null)
+					return;
+
 				Point pt = e.getPoint();
 				SwingUtilities.convertPointToScreen(pt, DetectionComponent.this);
 				SwingUtilities.convertPointFromScreen(pt, getParent());

@@ -66,7 +66,7 @@ public class Main {
 
 		JFrame frame = new JFrame(Program.APPLICATION_NAME);
 		frame.setJMenuBar(new Toolbar());
-		frame.getContentPane().add(new MainPanel());
+		frame.getContentPane().add(/* new MainPanel() */new MeasurePanel());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 

@@ -3,8 +3,10 @@ package org.jointheleague.ir;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -120,6 +122,11 @@ public class Popup {
 					Program.exit(e);
 				}
 			} else {
+				try {
+					href = URLDecoder.decode(href, StandardCharsets.UTF_8.name());
+				} catch (UnsupportedEncodingException ex) {
+					Program.exit(ex);
+				}
 				try {
 					webView.getEngine().loadContent(
 							wrapMarkdown(new String(Files.readAllBytes(Paths.get(href.substring("file:///".length()))),
