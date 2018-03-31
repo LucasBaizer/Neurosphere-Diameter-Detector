@@ -17,6 +17,7 @@ Lucas, a graduate of the school and a teacher's assistant, created the applicati
 --------
 
 # Download
+Check out the [releases](https://github.com/LucasBaizer/Organoid-Detector/releases) page!
 
 # Licensing
 View the licensing stuff [here](https://github.com/LucasBaizer/Organoid-Detector/blob/master/src/main/java/web/content/Licensing.md), straight from the in-app manual.
