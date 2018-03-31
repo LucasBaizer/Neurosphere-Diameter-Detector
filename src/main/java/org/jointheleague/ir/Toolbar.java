@@ -107,8 +107,8 @@ public class Toolbar extends JMenuBar {
 			add(item("About", () -> {
 				Popup.create("About", "About");
 			}, null));
-			add(item("License", () -> {
-				Popup.create("License", "License");
+			add(item("Licensing", () -> {
+				Popup.create("Licensing", "Licensing");
 			}, null));
 		}
 	}

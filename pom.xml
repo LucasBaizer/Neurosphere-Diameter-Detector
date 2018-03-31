@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.jointheleague</groupId>
-  <artifactId>neurosphere-detector</artifactId>
+  <artifactId>organoid-detector</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 

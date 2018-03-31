@@ -234,7 +234,8 @@ public class ImageComponent extends JComponent {
 				g.setColor(Color.BLACK);
 				g.setFont(new Font("Arial", Font.BOLD, getWidth() / 25));
 
-				FontMetrics metrics = getFontMetrics(getFont());
+				FontMetrics metrics = getFontMetrics(g.getFont());
+
 				g.drawString(backgroundText, (getWidth() - metrics.stringWidth(backgroundText)) / 2,
 						((getHeight() - metrics.getHeight()) / 2) + metrics.getAscent());
 			}

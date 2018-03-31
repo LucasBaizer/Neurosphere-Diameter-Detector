@@ -162,14 +162,14 @@ public class ExportPanel extends JPanel {
 				csvPrinter.flush();
 				csvPrinter.close();
 
-				container.setVisible(false);
+				container.dispose();
 			} catch (IOException ex) {
 				Program.exit(ex);
 			}
 		});
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(e -> {
-			container.setVisible(false);
+			container.dispose();
 		});
 
 		buttonPanel.add(cancelButton);

@@ -9,6 +9,8 @@ The File menu is discussed in section 1.2, and the Data menu is discussed in [1.
 The Help menu is used to get where you are right now-- the documentation!
 It also has a bit about this application, and all the necessary licensing for this applicaton and the libraries it uses.
 
+### Next up: [1.2 Basic Usage]($LOCAL/BasicUsage.md)
+
 --------
 
 ### [Table of Contents]($LOCAL/TableOfContents.md)

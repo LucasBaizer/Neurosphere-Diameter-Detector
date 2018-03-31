@@ -7,3 +7,7 @@ The opportunity to create this software was provided by [Dr. Lilia M. Iakoucheva
 Dr. Iakoucheva proposed the idea of the application to the [League of Amazing Programmers](http://www.jointheleague.org), a local school which teachers kids programming.
 <br />
 Lucas, a graduate of the school and a teacher's assistant, created the application after informed of the opporunity by the League's head teacher, Keith Groves.
+
+--------
+
+### [Table of Contents]($LOCAL/TableOfContents.md)

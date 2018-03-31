@@ -34,6 +34,10 @@ public class MeasurementPanel extends JPanel {
 		pxPanel.add(umLabel);
 
 		JPanel buttonsPanel = new JPanel();
+		JButton cancelButton = new JButton("Cancel");
+		cancelButton.addActionListener(e -> {
+			container.dispose();
+		});
 		JButton okButton = new JButton("Save & Close");
 		okButton.addActionListener(e -> {
 			try {
@@ -43,7 +47,7 @@ public class MeasurementPanel extends JPanel {
 				Fraction newFraction = new Fraction(um, px);
 				Measurement.setConversion(new Conversion(Measurement.PIXELS, Measurement.MICROMETERS), newFraction);
 
-				container.setVisible(false);
+				container.dispose();
 
 				onExit().markChanged();
 				onExit().notifyObservers(null);
@@ -54,6 +58,7 @@ public class MeasurementPanel extends JPanel {
 			}
 		});
 
+		buttonsPanel.add(cancelButton);
 		buttonsPanel.add(okButton);
 
 		add(pxPanel);

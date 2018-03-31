@@ -6,8 +6,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class Main {
 	public static JFrame FRAME;
@@ -58,5 +60,16 @@ public class Main {
 		frame.pack();
 
 		FRAME = frame;
+
+		if (Cache.get("ShowHelp").equals("true")) {
+			JCheckBox box = new JCheckBox("Do not show this again");
+			Object[] message = {
+					"Welcome! For help with the application, navigate to Help -> Manual in the menu bar at the top.",
+					box };
+			JOptionPane.showMessageDialog(null, message, Program.APPLICATION_NAME, JOptionPane.INFORMATION_MESSAGE);
+			if (box.isSelected()) {
+				Cache.save("ShowHelp", "false");
+			}
+		}
 	}
 }

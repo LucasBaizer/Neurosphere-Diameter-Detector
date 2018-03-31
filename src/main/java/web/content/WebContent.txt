@@ -1,8 +1,8 @@
-About:1.0.6
-License:1.0.2
-TableOfContents:1.0.4
-Introduction:1.0.4
-BasicUsage:1.0.2
+About:1.0.0
+Licensing:1.0.0
+TableOfContents:1.0.0
+Introduction:1.0.0
+BasicUsage:1.0.0
 ModifyingData:1.0.0
 ExportingData:1.0.0
 Configuring:1.0.0

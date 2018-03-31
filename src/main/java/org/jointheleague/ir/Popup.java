@@ -95,8 +95,8 @@ public class Popup {
 				NodeList anchors = document.getElementsByTagName("a");
 				for (int i = 0; i < anchors.getLength(); i++) {
 					Node node = anchors.item(i);
-					EventTarget eventTarget = (EventTarget) node;
-					eventTarget.addEventListener("click", this, false);
+					EventTarget target = (EventTarget) node;
+					target.addEventListener("click", this, false);
 				}
 			}
 		}
@@ -105,6 +105,12 @@ public class Popup {
 		public void handleEvent(Event event) {
 			HTMLAnchorElement anchorElement = (HTMLAnchorElement) event.getCurrentTarget();
 			String href = anchorElement.getHref();
+
+			if (href.equals("#")) {
+				String to = anchorElement.getAttribute("data-goto");
+				webView.getEngine().executeScript("document.getElementById('" + to + "').scrollIntoView();");
+				return;
+			}
 
 			if (!href.startsWith("file:///")) {
 				try {

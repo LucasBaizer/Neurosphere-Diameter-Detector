@@ -272,7 +272,7 @@ public class UIPanel extends JPanel {
 				output.repaint();
 
 				outputTime.setText("Took " + new BigDecimal(passed / 1000d).round(new MathContext(3)) + "s");
-				outputCircles.setText(detected.size() + " neurospheres");
+				outputCircles.setText(detected.size() + " organoids");
 				outputAverage.setText("Average "
 						+ (int) Measurement.PIXELS.convert(Measurement.MICROMETERS, detected.getAverageDiameter())
 						+ "μm");
@@ -304,7 +304,7 @@ public class UIPanel extends JPanel {
 				});
 
 				detected.onListChanged().addObserver((source, detection) -> {
-					outputCircles.setText(detected.size() + " neurospheres");
+					outputCircles.setText(detected.size() + " organoids");
 					outputAverage.setText("Average "
 							+ (int) Measurement.PIXELS.convert(Measurement.MICROMETERS, detected.getAverageDiameter())
 							+ "μm");

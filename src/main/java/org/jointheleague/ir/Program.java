@@ -20,8 +20,8 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 
 public class Program {
-	public static final String APPLICATION_NAME = "Neurosphere Detector";
-	public static final String APPLICATION_INTERNAL = "NeurosphereDetector";
+	public static final String APPLICATION_NAME = "Organoid Detector";
+	public static final String APPLICATION_INTERNAL = "OrganoidDetector";
 
 	private static File dataFolder;
 	private static File cacheFile;

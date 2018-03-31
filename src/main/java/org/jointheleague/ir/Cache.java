@@ -32,6 +32,7 @@ public class Cache {
 		ensure("Delimiter", ",");
 		ensure("pixels->micrometers", "100/55");
 		ensure("micrometers->pixels", "55/100");
+		ensure("ShowHelp", "true");
 	}
 
 	private static void ensure(String key, String value) {
