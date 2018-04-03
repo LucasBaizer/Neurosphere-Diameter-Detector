@@ -19,13 +19,14 @@ To remove a false positive, click on the detection which is a false positive.
 Press the *Delete* key on your keyboard to remove the false positive.
 
 ### Moving Detections
-To move an off-center detection, simply click and hold down on the detection.
-Move your mouse to the destination, and let go.
+To move an off-center detection, simply click on the detection.
+Move your mouse to the destination, and click again.
 
 ### Resizing Detections
-To change the size of a detection, click and hold on the detection.
+To change the size of a detection, click on the detection.
 On your move, scroll wheel up to decrease the size of the detection.
 Scroll wheel down to increase the size of the detection.
+When you're done changing the size, click again.
 
 ### Next up: [1.4 Exporting Data]($LOCAL/ExportingData.md)
 
