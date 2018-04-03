@@ -43,6 +43,7 @@ public class ImageComponent extends JComponent {
 	private File file;
 	private boolean input;
 	private String backgroundText = null;
+	private Dimension preferredSize;
 
 	private MouseAdapter inputListener = new MouseAdapter() {
 		public void mouseMoved(MouseEvent e) {
@@ -64,10 +65,14 @@ public class ImageComponent extends JComponent {
 	};
 
 	public ImageComponent(File imageFile) {
+		this(imageFile, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	}
+
+	public ImageComponent(File imageFile, int width, int height) {
+		this.preferredSize = new Dimension(width, height);
+
 		if (imageFile != null) {
 			setImage(imageFile);
-		} else {
-			this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 		}
 
 		this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -141,15 +146,42 @@ public class ImageComponent extends JComponent {
 			return;
 		}
 
-		double ratio = getWidth() / (double) image.getWidth();
+		double ratio = getPreferredSize().width / (double) image.getWidth();
 		this.scale = ratio;
 
 		double imageHeight = image.getHeight() * ratio;
 
-		setPreferredSize(new Dimension(getWidth(), (int) imageHeight));
+		this.preferredSize = new Dimension(getPreferredSize().width, (int) imageHeight);
 
 		scaleChanged.markChanged();
 		scaleChanged.notifyObservers(this.scale);
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		return preferredSize;
+	}
+
+	@Override
+	public Dimension getSize() {
+		return preferredSize;
+	}
+
+	@Override
+	public Dimension getSize(Dimension rv) {
+		rv.width = preferredSize.width;
+		rv.height = preferredSize.height;
+		return rv;
+	}
+
+	@Override
+	public Dimension getMinimumSize() {
+		return preferredSize;
+	}
+
+	@Override
+	public Dimension getMaximumSize() {
+		return preferredSize;
 	}
 
 	public void refresh() {
@@ -158,6 +190,8 @@ public class ImageComponent extends JComponent {
 	}
 
 	public ImageComponent setImage(File imageFile) {
+		this.file = imageFile;
+
 		return setImage(opencv_imgcodecs.cvLoadImage(imageFile.getPath()));
 	}
 
@@ -167,8 +201,8 @@ public class ImageComponent extends JComponent {
 			return this;
 		}
 		this.image = ImageUtility.toBufferedImage(image);
-		this.renderImage = ImageUtility.scale(this.image, getWidth(), getHeight());
 		resize(this.image);
+		this.renderImage = ImageUtility.scale(this.image, getPreferredSize().width, getPreferredSize().height);
 		return this;
 	}
 
@@ -276,5 +310,9 @@ public class ImageComponent extends JComponent {
 
 	public double getScale() {
 		return scale;
+	}
+
+	public void setForcedSize(Dimension ps) {
+		this.preferredSize = ps;
 	}
 }

@@ -24,6 +24,7 @@ public class Main {
 			int width = 300;
 			int height = 250;
 			JDialog dialog = Popup.create(Program.APPLICATION_NAME, "Load");
+			dialog.setAlwaysOnTop(true);
 			dialog.setUndecorated(true);
 			dialog.setSize(width, height);
 			dialog.addWindowListener(new WindowAdapter() {
@@ -66,15 +67,19 @@ public class Main {
 
 		JFrame frame = new JFrame(Program.APPLICATION_NAME);
 		frame.setJMenuBar(new Toolbar());
-		frame.getContentPane().add(/* new MainPanel() */new MeasurePanel());
+		// frame.getContentPane().add(new MainPanel());
+		frame.getContentPane().add(new MeasurePanel());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		Point center = new Point(dim.width / 2 - frame.getWidth() / 2, 100);
 		frame.setLocation(center);
-
+		frame.setAlwaysOnTop(true);
 		frame.setVisible(true);
+		frame.toFront();
+		frame.requestFocus();
+		frame.setAlwaysOnTop(false);
 
 		FRAME = frame;
 

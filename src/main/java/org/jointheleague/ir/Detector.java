@@ -63,7 +63,7 @@ public class Detector {
 		CvMemStorage mem = CvMemStorage.create();
 		CvSeq circles = cvHoughCircles(blurred, mem, CV_HOUGH_GRADIENT, 1,
 				Measurement.MICROMETERS.convert(Measurement.PIXELS, minDistance), 100, 25, minSizePixels / 2,
-				minSizePixels);
+				(int) (minSizePixels * 0.75));
 		DetectionList detections = new DetectionList();
 
 		BufferedImage img = ImageUtility.toBufferedImage(src);

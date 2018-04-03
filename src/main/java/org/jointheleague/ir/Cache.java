@@ -26,6 +26,7 @@ public class Cache {
 
 		ensure("ImageDirectory", System.getProperty("user.home"));
 		ensure("SaveDirectory", System.getProperty("user.home"));
+		ensure("DatabaseDirectory", System.getProperty("user.home"));
 		ensure("BlurFactor", "1.0");
 		ensure("MinimumSize", "100");
 		ensure("MinimumDistance", "200");
@@ -34,6 +35,7 @@ public class Cache {
 		ensure("micrometers->pixels", "55/100");
 		ensure("ShowHelp", "true");
 		ensure("Databases", "");
+		ensure("DefaultDatabase", "None");
 	}
 
 	private static void ensure(String key, String value) {

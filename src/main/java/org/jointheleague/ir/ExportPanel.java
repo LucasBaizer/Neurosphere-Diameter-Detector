@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -25,7 +26,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 
 public class ExportPanel extends JPanel {
 	private static final long serialVersionUID = -2007241054369013959L;
@@ -34,7 +34,7 @@ public class ExportPanel extends JPanel {
 	private String fileName;
 	private char delimiter = Cache.get("Delimiter").charAt(0);
 
-	public ExportPanel(JDialog container, String fileName, DetectionList detections) {
+	public ExportPanel(JDialog container, String fileName, DetectionList db, CSVHandler handler) {
 		setLayout(new GridBagLayout());
 
 		GridBagConstraints c = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.FIRST_LINE_START,
@@ -74,18 +74,38 @@ public class ExportPanel extends JPanel {
 		directoryPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		directoryPanel.add(saveDirButton);
 
+		JPanel dbPanel = new JPanel();
+		dbPanel.setLayout(new BoxLayout(dbPanel, BoxLayout.X_AXIS));
+
+		JLabel dbLabel = new JLabel("Database: ");
+		Object[] itemStart = DetectionDatabase.CURRENT.stream().map(e -> e.getName()).toArray();
+		String[] items = Arrays.copyOf(itemStart, itemStart.length, String[].class);
+		String[] finalItems = new String[items.length + 1];
+		finalItems[0] = "None";
+		System.arraycopy(items, 0, finalItems, 1, items.length);
+		JComboBox<String> dbBox = new JComboBox<>(finalItems);
+		dbBox.setSelectedItem(Cache.get("DefaultDatabase"));
+
+		dbBox.addItemListener(e -> {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				Cache.save("DefaultDatabase", (String) e.getItem());
+			}
+		});
+
+		dbPanel.add(dbLabel);
+		dbPanel.add(dbBox);
+
 		JPanel filePanel = new JPanel();
 		filePanel.setLayout(new BoxLayout(filePanel, BoxLayout.X_AXIS));
 
 		JLabel fileLabel = new JLabel("File Name: ");
-		JTextField fileField = new JTextField(fileWithoutExt);
+		JTextField fileField = new JTextField(fileWithoutExt, fileWithoutExt.length());
 		JLabel csvLabel = new JLabel(".csv");
 
 		filePanel.add(fileLabel);
 		filePanel.add(fileField);
 		filePanel.add(csvLabel);
 
-		fileField.setText(fileWithoutExt);
 		fileField.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
@@ -155,18 +175,18 @@ public class ExportPanel extends JPanel {
 				csvFile.createNewFile();
 
 				BufferedWriter out = new BufferedWriter(new FileWriter(csvFile));
-
 				CSVFormat format = CSVFormat.newFormat(delimiter).withQuote('"')
 						.withRecordSeparator(System.lineSeparator()).withIgnoreEmptyLines(true);
+				handler.handle(fileWithoutExt, out, format);
 
-				CSVPrinter csvPrinter = new CSVPrinter(out, format.withHeader("Plate Name", "Cell Size (µm)"));
-
-				for (Detection detection : detections) {
-					csvPrinter.printRecord(fileWithoutExt, Integer.toString(detection.getDiameter()));
+				if (db != null) {
+					String cacheDb = Cache.get("DefaultDatabase");
+					if (!cacheDb.equals("None")) {
+						DetectionDatabase database = DetectionDatabase.forName(cacheDb);
+						database.insert(MeasurePanel.getInstance().getInputComponent().getSelectedFile(), db);
+						database.save();
+					}
 				}
-
-				csvPrinter.flush();
-				csvPrinter.close();
 
 				container.dispose();
 			} catch (IOException ex) {
@@ -181,16 +201,21 @@ public class ExportPanel extends JPanel {
 		buttonPanel.add(cancelButton);
 		buttonPanel.add(exportButton);
 
-		c.gridy = 0;
+		c.gridy++;
 		add(directoryPanel, c);
 
-		c.gridy = 1;
+		c.gridy++;
 		add(filePanel, c);
 
-		c.gridy = 2;
+		if (db != null) {
+			c.gridy++;
+			add(dbPanel, c);
+		}
+
+		c.gridy++;
 		add(delimiterPanel, c);
 
-		c.gridy = 3;
+		c.gridy++;
 		add(buttonPanel, c);
 
 		exportButton.requestFocus();

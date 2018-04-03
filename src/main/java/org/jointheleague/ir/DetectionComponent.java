@@ -46,16 +46,25 @@ public class DetectionComponent extends JComponent {
 		MouseAdapter listener = new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				selected = true;
-				selectedPoint = e.getPoint();
-				color = Color.GREEN;
-				repaint();
+				if (selected = !selected) {
+					selectedPoint = e.getPoint();
+					color = Color.GREEN;
 
-				requestFocus();
+					getParent().setComponentZOrder(DetectionComponent.this, 0);
+					repaint();
+
+					requestFocus();
+				} else {
+					selected = false;
+					selectedPoint = null;
+					repaint();
+				}
 			}
 
 			@Override
-			public void mouseDragged(MouseEvent e) {
+			public void mouseMoved(MouseEvent e) {
+				if (!selected)
+					return;
 				if (selectedPoint == null)
 					return;
 
@@ -66,13 +75,6 @@ public class DetectionComponent extends JComponent {
 				setLocation(pt.x - selectedPoint.x, pt.y - selectedPoint.y);
 				detection.setCenter(new Point((int) (getLocation().x / scale), (int) (getLocation().y / scale)));
 
-				repaint();
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				selected = false;
-				selectedPoint = null;
 				repaint();
 			}
 

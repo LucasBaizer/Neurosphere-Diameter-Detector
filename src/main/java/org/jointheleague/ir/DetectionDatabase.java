@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 // not a javadoc because eclipse auto-format :(
 /*
@@ -27,16 +28,30 @@ import java.util.Map;
  *     [int] radius
  */
 public class DetectionDatabase {
-	public static final String FILE_EXTENSION = "dsd";
+	public static final String FILE_EXTENSION = "ddb";
 	public static final List<DetectionDatabase> CURRENT = new ArrayList<>();
 
 	private String name;
 	private File databaseFile;
 	private Map<File, DetectionList> storage = new HashMap<>();
+	private Subject<DatabaseEvent> onInsert = new Subject<>();
 
-	public DetectionDatabase(String name, File databaseFile) {
+	private DetectionDatabase() {
+	}
+
+	public DetectionDatabase(String name, File databaseFile) throws IOException {
 		this.name = name;
 		this.databaseFile = databaseFile;
+
+		save();
+	}
+
+	public DetectionList getDetections(File file) {
+		return storage.get(file);
+	}
+
+	public Subject<DatabaseEvent> onInsert() {
+		return onInsert;
 	}
 
 	public File getDatabaseFile() {
@@ -48,7 +63,14 @@ public class DetectionDatabase {
 	}
 
 	public void insert(File input, DetectionList list) {
-		storage.put(input, list);
+		boolean insert = storage.put(input, list) == null;
+
+		onInsert.markChanged();
+		onInsert.notifyObservers(new DatabaseEvent(input, list, insert ? DatabaseEvent.ADD : DatabaseEvent.MODIFY));
+	}
+
+	public Set<Map.Entry<File, DetectionList>> getStorage() {
+		return storage.entrySet();
 	}
 
 	public void remove(File input) {
@@ -56,16 +78,20 @@ public class DetectionDatabase {
 	}
 
 	public void save() throws IOException {
-		int size = 8; // database name length + amount of files
+		int size = 4; // database name length
 		size += name.length(); // database name bytes
+		size += 4; // file amount
 		for (File file : storage.keySet()) {
 			size += 4; // file name length
 			size += file.getAbsolutePath().length(); // file name bytes
 
 			DetectionList list = storage.get(file);
-			size += 4; // amount of detections
-			for (int i = 0; i < list.size(); i++) {
-				size += 12; // x + y + radius
+			size += 4; // length of list
+			if (list.size() > 0) {
+				size += 4; // amount of detections
+				for (int i = 0; i < list.size(); i++) {
+					size += 12; // x + y + radius
+				}
 			}
 		}
 
@@ -74,8 +100,9 @@ public class DetectionDatabase {
 		for (char c : name.toCharArray()) {
 			buf.put((byte) c);
 		}
+		buf.putInt(storage.size());
 		for (File file : storage.keySet()) {
-			buf.putInt(file.getName().length());
+			buf.putInt(file.getAbsolutePath().length());
 			for (char c : file.getAbsolutePath().toCharArray()) {
 				buf.put((byte) c);
 			}
@@ -92,8 +119,19 @@ public class DetectionDatabase {
 		Files.write(databaseFile.toPath(), buf.array());
 	}
 
+	public static DetectionDatabase forName(String name) {
+		for (DetectionDatabase db : CURRENT) {
+			if (db.getName().equals(name)) {
+				return db;
+			}
+		}
+
+		return null;
+	}
+
 	public static DetectionDatabase read(File file) throws IOException {
-		DetectionDatabase database = new DetectionDatabase(null, file);
+		DetectionDatabase database = new DetectionDatabase();
+		database.databaseFile = file;
 
 		byte[] bytes = Files.readAllBytes(file.toPath());
 		ByteBuffer buf = ByteBuffer.wrap(bytes);
@@ -128,8 +166,12 @@ public class DetectionDatabase {
 	private static String getString(ByteBuffer buf, int len) {
 		String str = "";
 		for (int i = 0; i < len; i++) {
-			str += buf.get();
+			str += (char) buf.get();
 		}
 		return str;
+	}
+
+	public int size() {
+		return storage.size();
 	}
 }
