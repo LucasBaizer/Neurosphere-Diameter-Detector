@@ -43,6 +43,9 @@ public class ExportPanel extends JPanel {
 		String fileWithoutExt = fileName.substring(0, fileName.indexOf('.'));
 
 		this.saveDir = new File(Cache.get("SaveDirectory"));
+		if(!this.saveDir.exists()) {
+			this.saveDir = new File(System.getProperty("user.dir"));
+		}
 		this.fileName = fileWithoutExt + ".csv";
 
 		JPanel directoryPanel = new JPanel();
