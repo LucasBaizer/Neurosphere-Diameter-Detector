@@ -1,13 +1,13 @@
 package org.jointheleague.ir;
 
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -126,42 +126,17 @@ public class DatabasePanel extends JPanel {
 		ImageComponent comp = new ImageComponent(file, 300, 215);
 		entry.add(comp);
 
-		JLabel label = new JLabel(file.getAbsolutePath()) {
-			private static final long serialVersionUID = -6848602986052433277L;
-
-			@Override
-			public Point getLocation() {
-				return new Point(300, 0);
-			}
-
-			@Override
-			public Point getLocation(Point rv) {
-				rv.x = 300;
-				rv.y = 0;
-				return rv;
-			}
-
-			@Override
-			public Rectangle getBounds() {
-				return new Rectangle(getLocation().x, getLocation().y, getPreferredSize().width,
-						getPreferredSize().height);
-			}
-
-			@Override
-			public Rectangle getBounds(Rectangle rv) {
-				rv.x = getLocation().x;
-				rv.y = getLocation().y;
-				rv.width = getPreferredSize().width;
-				rv.height = getPreferredSize().height;
-				return rv;
-			}
-		};
+		JLabel label = new JLabel(file.getAbsolutePath());
+		label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		entry.add(label);
-		entry.setForcedSize(new Dimension(300, entry.getTypicalSize().height));
 
-		current.add(entry);
+		entry.setForcedSize(new Dimension(300, entry.getTypicalSize().height));
+		entry.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+		// current.add(entry);
+		current.add(new LabeledComponent(comp, getFontMetrics(getFont())));
 		current.add(Box.createRigidArea(new Dimension(20, 0)));
-		current.setForcedSize(new Dimension(320 * i, current.getTypicalSize().height + 20));
+		current.setForcedSize(new Dimension(320 * i + 20, current.getTypicalSize().height + 20));
 
 		comp.addMouseListener(new MouseAdapter() {
 			@Override

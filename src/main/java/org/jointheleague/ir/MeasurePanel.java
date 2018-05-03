@@ -319,12 +319,12 @@ public class MeasurePanel extends JPanel {
 						CSVPrinter csvPrinter = new CSVPrinter(out, format.withHeader("Plate Name", "Cell Size (µm)"));
 
 						for (Detection detection : detected) {
-							csvPrinter.printRecord(fileName, Integer.toString(detection.getDiameter()));
+							csvPrinter.printRecord(fileName, Integer.toString((int) Measurement.PIXELS
+									.convert(Measurement.MICROMETERS, detection.getDiameter())));
 						}
 
 						csvPrinter.flush();
 						csvPrinter.close();
-
 					}));
 
 			Dimension size = dialog.getContentPane().getPreferredSize();

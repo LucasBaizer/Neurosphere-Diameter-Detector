@@ -112,7 +112,7 @@ public class ImageComponent extends JComponent {
 			}
 
 			resize(image);
-			renderImage = ImageUtility.scale(image, getPreferredSize().width, getPreferredSize().height);
+			this.renderImage = ImageUtility.scale(this.image, getPreferredSize().width, getPreferredSize().height);
 
 			ImageComponent.this.file = file;
 			refresh();
@@ -152,6 +152,8 @@ public class ImageComponent extends JComponent {
 		double imageHeight = image.getHeight() * ratio;
 
 		this.preferredSize = new Dimension(getPreferredSize().width, (int) imageHeight);
+		setPreferredSize(this.preferredSize);
+		setSize(this.preferredSize);
 
 		scaleChanged.markChanged();
 		scaleChanged.notifyObservers(this.scale);
@@ -182,6 +184,16 @@ public class ImageComponent extends JComponent {
 	@Override
 	public Dimension getMaximumSize() {
 		return preferredSize;
+	}
+
+	@Override
+	public int getWidth() {
+		return preferredSize.width;
+	}
+
+	@Override
+	public int getHeight() {
+		return preferredSize.height;
 	}
 
 	public void refresh() {
@@ -264,16 +276,16 @@ public class ImageComponent extends JComponent {
 
 		if (image == null) {
 			g.setColor(getBackground());
-			g.fillRect(0, 0, getWidth(), getHeight());
+			g.fillRect(0, 0, getPreferredSize().width, getPreferredSize().height);
 
 			if (backgroundText != null) {
 				g.setColor(Color.BLACK);
-				g.setFont(new Font("Arial", Font.BOLD, getWidth() / 25));
+				g.setFont(new Font("Arial", Font.BOLD, getPreferredSize().width / 25));
 
 				FontMetrics metrics = getFontMetrics(g.getFont());
 
-				g.drawString(backgroundText, (getWidth() - metrics.stringWidth(backgroundText)) / 2,
-						((getHeight() - metrics.getHeight()) / 2) + metrics.getAscent());
+				g.drawString(backgroundText, (getPreferredSize().width - metrics.stringWidth(backgroundText)) / 2,
+						((getPreferredSize().height - metrics.getHeight()) / 2) + metrics.getAscent());
 			}
 		} else {
 			g.drawImage(renderImage, 0, 0, this);
